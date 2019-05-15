@@ -1,0 +1,7 @@
+readPath: 
+savepath:
+fields:
+    - field: "a"
+      type: "string"
+    - field: "b"
+      type: "int"

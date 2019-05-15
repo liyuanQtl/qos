@@ -1,0 +1,11 @@
+connectInfo:
+    - bootstrap_servers: "k1:9092,k2:9092,k3:9092,k4:9092,k5:9092"
+    - zookeeper_connect: "zk1:50000/kafka101,zk2:50000/kafka101,zk3:50000/kafka101,zk4:50000/kafka101,zk5:50000/kafka101"
+    - group_id: "kafka101_test"
+    - topic: "hdtaccesskafka"
+    - start_position: "latest"
+fields:
+    - field: "a"
+      type: "string"
+    - field: "b"
+      type: "int"
