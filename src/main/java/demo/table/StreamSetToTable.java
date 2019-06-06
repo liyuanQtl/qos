@@ -18,33 +18,47 @@
 
 package demo.table;
 
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
-import org.apache.flink.api.common.serialization.DeserializationSchema;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
-import org.apache.flink.streaming.api.functions.AssignerWithPunctuatedWatermarks;
+
+import java.util.Map;
+import java.util.Iterator;
+import java.util.Collection;
+import java.util.Map.Entry;
+
+import org.apache.flink.api.java.typeutils.RowTypeInfo;
+import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.table.api.Table;
+import org.apache.flink.table.api.TableEnvironment;
+import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.table.api.java.BatchTableEnvironment;
+import org.apache.flink.types.Row;
 
 public class StreamSetToTable {
 	
 	private static final Logger _log = LoggerFactory.getLogger(StreamSetToTable.class);
 	
-	public Table streamToTable(DataStream stream) throws Exception {
+	public Table streamToTable(StreamTableEnvironment tableEnv, DataStream stream) throws Exception {
 		// Convert the DataStream into a Table with default fields "f0", "f1"
 		Table table1 = tableEnv.fromDataStream(stream);
 
 		// Convert the DataStream into a Table with fields "myLong", "myString"
-		Table table2 = tableEnv.fromDataStream(stream, "myLong, myString");
+//		Table table2 = tableEnv.fromDataStream(stream, "myLong, myString");
 		return table1;
 	}
 	
-	public Table setToTable(DataSet set) throws Exception {
-		// Convert the DataStream into a Table with default fields "f0", "f1"
+	public Table setToTable(BatchTableEnvironment tableEnv, DataSet set) throws Exception {
+		// Convert the DataSet into a Table with default fields "f0", "f1"
 		Table table1 = tableEnv.fromDataSet(set);
 
-		// Convert the DataStream into a Table with fields "myLong", "myString"
-		Table table2 = tableEnv.fromDataStream(set, "myLong, myString");
+		// Convert the DataSet into a Table with fields "myLong", "myString"
+		Table table2 = tableEnv.fromDataSet(set, "myLong, myString");
 		return table1;
+	}
+	
+	public void registerStream(StreamTableEnvironment tableEnv, String tableName, DataStream<Row> stream) {
+		tableEnv.registerDataStream(tableName, stream);
 	}
 }

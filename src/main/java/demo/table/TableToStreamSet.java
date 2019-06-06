@@ -20,52 +20,57 @@ package demo.table;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.flink.api.java.DataSet;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.table.api.Table;
+import org.apache.flink.table.api.TableEnvironment;
+import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.table.api.java.BatchTableEnvironment;
+import org.apache.flink.types.Row;
 
 public class TableToStreamSet {
 	
 	private static final Logger _log = LoggerFactory.getLogger(TableToStreamSet.class);
 
-	public DataStream tableToStream(Datastream<Row> dsRow) throws Exception {
+//	public DataStream tableToRetractStream(Datastream<Row> dsRow) throws Exception {
+//		// convert the Table into a retract DataStream of Row.
+//		//   A retract stream of type X is a DataStream<Tuple2<Boolean, X>>. 
+//		//   The boolean field indicates the type of the change. 
+//		//   True is INSERT, false is DELETE.
+//		DataStream<Tuple2<Boolean, Row>> retractStream = 
+//		  tableEnv.toRetractStream(table, Row.class);
+//		
+//		return retractStream;
+//	}
+	
+	public DataStream tableToStream(StreamTableEnvironment tableEnv, Table table) throws Exception {
 		// convert the Table into an append DataStream of Row by specifying the class
 		DataStream<Row> dsRow = tableEnv.toAppendStream(table, Row.class);
-
-		// convert the Table into an append DataStream of Tuple2<String, Integer> 
-		//   via a TypeInformation
-		TupleTypeInfo<Tuple2<String, Integer>> tupleType = new TupleTypeInfo<>(
-		  Types.STRING(),
-		  Types.INT());
-		DataStream<Tuple2<String, Integer>> dsTuple = 
-		  tableEnv.toAppendStream(table, tupleType);
-
-		// convert the Table into a retract DataStream of Row.
-		//   A retract stream of type X is a DataStream<Tuple2<Boolean, X>>. 
-		//   The boolean field indicates the type of the change. 
-		//   True is INSERT, false is DELETE.
-		DataStream<Tuple2<Boolean, Row>> retractStream = 
-		  tableEnv.toRetractStream(table, Row.class);
-		
-		return retractStream;
+		return dsRow;
 	}
 	
-	public DataSet tableToSet(DataSet<Row> dsRow) throws Exception {
+//	public DataStream tableToStream(Datastream<Row> dsRow, TupleTypeInfo<?> ) throws Exception {
+//
+//		// convert the Table into an append DataStream of Tuple2<String, Integer> 
+//		//   via a TypeInformation
+//		TupleTypeInfo<Tuple2<String, Integer>> tupleType = new TupleTypeInfo<>(
+//		  Types.STRING(),
+//		  Types.INT());
+//		DataStream<Tuple2<String, Integer>> dsTuple = 
+//		  tableEnv.toAppendStream(table, tupleType);
+//		return dsRow;
+//	}
+	
+	public DataSet tableToSet(BatchTableEnvironment tableEnv, Table table) throws Exception {
 		// convert the Table into an append DataSet of Row by specifying the class
-		DataSet<Row> dsRow = tableEnv.toAppendSet(table, Row.class);
-
-		// convert the Table into an append DataSet of Tuple2<String, Integer> 
-		//   via a TypeInformation
-		TupleTypeInfo<Tuple2<String, Integer>> tupleType = new TupleTypeInfo<>(
-		  Types.STRING(),
-		  Types.INT());
-		DataSet<Tuple2<String, Integer>> dsTuple = 
-		  tableEnv.toAppendSet(table, tupleType);
-
-		// convert the Table into a retract DataSet of Row.
-		//   A retract set of type X is a DataSet<Tuple2<Boolean, X>>. 
-		//   The boolean field indicates the type of the change. 
-		//   True is INSERT, false is DELETE.
-		DataSet<Tuple2<Boolean, Row>> retractSet = 
-		  tableEnv.toRetractSet(table, Row.class);
-		
-		return retractSet;
+		DataSet<Row> dsRow = tableEnv.toDataSet(table, Row.class);
+		return dsRow;
+	}
+	
+	public DataSet tableToSet(BatchTableEnvironment tableEnv, Table table, TypeInformation<Row> tpe) throws Exception {
+		// convert the Table into an append DataSet of Row by specifying the class
+		DataSet<Row> dsRow = tableEnv.toDataSet(table, tpe);
+		return dsRow;
 	}
 }

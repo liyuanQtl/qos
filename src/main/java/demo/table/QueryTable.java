@@ -18,13 +18,13 @@
 
 package demo.table;
 
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
-import org.apache.flink.api.common.serialization.DeserializationSchema;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
-import org.apache.flink.streaming.api.functions.AssignerWithPunctuatedWatermarks;
+
+import org.apache.flink.table.api.Table;
+import org.apache.flink.table.api.TableEnvironment;
+import org.apache.flink.table.api.java.BatchTableEnvironment;
+import org.apache.flink.table.api.java.StreamTableEnvironment;
 
 public class QueryTable {
 	
@@ -39,17 +39,17 @@ public class QueryTable {
 	public Table queryTable(BatchTableEnvironment tableEnv, String sql) throws Exception {
 		// compute revenue for all customers from France
 		Table revenue = tableEnv.sqlQuery(sql);
-		return Table;
+		return revenue;
 	}
 	public StreamTableEnvironment updateTable(StreamTableEnvironment tableEnv, String updateSql) throws Exception {
 		// compute revenue for all customers from France and emit to "RevenueFrance"
-		tableEnv.sqlUpdate(sql);
+		tableEnv.sqlUpdate(updateSql);
 		return tableEnv;
 	}
 
-	public StreamTableEnvironment updateTable(BatchTableEnvironment tableEnv, String updateSql) throws Exception {
+	public BatchTableEnvironment updateTable(BatchTableEnvironment tableEnv, String updateSql) throws Exception {
 		// compute revenue for all customers from France and emit to "RevenueFrance"
-		tableEnv.sqlUpdate(sql);
+		tableEnv.sqlUpdate(updateSql);
 		return tableEnv;
 	}
 }

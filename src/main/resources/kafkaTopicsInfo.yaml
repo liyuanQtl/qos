@@ -1,0 +1,232 @@
+hdtaccesskafka:
+    type: json
+    separate:  
+    fields:
+        - name: chan
+          type: String
+          discription:
+        - name: host_ip
+          type: String
+          discription:
+        - name: time_stamp
+          type: Long
+          discription:
+        - name: pre_hop_ip
+          type: String
+          discription:
+        - name: rt
+          type: String
+          discription:
+        - name: hdt_dst
+          type: String
+          discription:
+        - name: exit_code
+          type: int
+          discription:
+        - name: recv_bytes_from_client
+          type: Long
+          discription:
+        - name: send_bytes_to_client
+          type: Long
+          discription:
+        - name: duration_msec
+          type: Long
+          discription:
+        - name: hdt_next
+          type: String
+          discription:
+        - name: session_id
+          type: int
+          discription:
+        - name: shield_ip
+          type: String
+          discription:
+        - name: request_id
+          type: String
+          discription:
+        - name: transport_target
+          type: String
+          discription:
+        - name: transport_code
+          type: String
+          discription:
+        - name: transport_id
+          type: int
+          discription:
+        - name: transport_type
+          type: String
+          discription:
+        - name: hdt_tp_type_n
+          type: String
+          discription:
+        - name: customer_id
+          type: int
+          discription:
+        - name: next_hop_type
+          type: String
+          discription:
+        - name: next_hop_ip
+          type: String
+          discription:
+        - name: status
+          type: int
+          discription:
+        - name: hdt_fcip_in
+          type: int
+          discription:
+        - name: hdt_host_in
+          type: int
+          discription:
+        - name: hdt_cip_in
+          type: int
+          discription:
+        - name: host_node
+          type: String
+          discription:
+        - name: host_node_cn
+          type: String
+          discription:
+        - name: shield_node
+          type: String
+          discription:
+        - name: shield_node_cn
+          type: String
+          discription:
+        - name: fhview
+          type: String
+          discription:
+        - name: pre_hop_country
+          type: String
+          discription:
+        - name: pre_hop_province
+          type: String
+          discription:
+        - name: pre_hop_city
+          type: String
+          discription:
+        - name: pre_hop_longitude
+          type: String
+          discription:
+        - name: pre_hop_latitude
+          type: String
+          discription:
+        - name: fcview
+          type: String
+          discription:
+        - name: host_country
+          type: String
+          discription:
+        - name: host_province
+          type: String
+          discription:
+        - name: host_city
+          type: String
+          discription:
+        - name: host_longitude
+          type: String
+          discription:
+        - name: host_latitude
+          type: String
+          discription:
+        - name: hdt_cip_ipview
+          type: String
+          discription:
+        - name: shield_country
+          type: String
+          discription:
+        - name: shield_province
+          type: String
+          discription:
+        - name: shield_city
+          type: String
+          discription:
+        - name: shield_longitude
+          type: String
+          discription:
+        - name: shield_latitude
+          type: String
+          discription:
+        - name: fe_compField
+          type: String
+          discription:
+        - name: rttz0
+          type: String
+          discription:
+        - name: procts
+          type: Long
+          discription:
+        - name: hostname
+          type: String
+          discription:
+        - name: customer
+          type: String
+          discription:
+        - name: target_domain
+          type: String
+          discription:
+        - name: target_port
+          type: int
+          discription:
+        - name: is_relay1_udp
+          type: String
+          discription:
+        - name: relay1_ip
+          type: String
+          discription:
+        - name: relay1_hostname
+          type: String
+          discription:
+        - name: is_relay2_udp
+          type: String
+          discription:
+        - name: relay2_ip
+          type: String
+          discription:
+        - name: relay2_hostname
+          type: String
+          discription:
+        - name: is_relay3_udp
+          type: String
+          discription:
+        - name: relay3_ip
+          type: String
+          discription:
+        - name: relay3_hostname
+          type: String
+          discription:
+        - name: is_shield_udp
+          type: int
+          discription:
+        - name: send_speed
+          type: Long
+          discription:
+        - name: recv_speed
+          type: Long
+          discription:
+        - name: is_edge
+          type: int
+          discription:
+        - name: service_ip
+          type: String
+          discription:
+        - name: service_port
+          type: int
+          discription:
+        - name: pre_hop_port
+          type: int
+          discription:
+        - name: state
+          type:  String
+          discription:
+        - name: resp_code
+          type: int
+          discription:
+        - name: hdt_access_domain
+          type: String
+          discription:
+        - name: hdt_dtp_send
+          type: int
+          discription:
+        - name: _obduuid
+          type: String
+          discription:

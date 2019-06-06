@@ -20,8 +20,8 @@ under the License.
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>qos-demo2</groupId>
-	<artifactId>qos-demo2</artifactId>
+	<groupId>qos</groupId>
+	<artifactId>qos</artifactId>
 	<version>0.1</version>
 	<packaging>jar</packaging>
 
@@ -32,7 +32,7 @@ under the License.
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<flink.version>1.7.2</flink.version>
 		<java.version>1.8</java.version>
-		<scala.binary.version>2.11</scala.binary.version>
+		<binary.version>2.11</binary.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
@@ -61,17 +61,12 @@ under the License.
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+			<artifactId>flink-streaming-java_${binary.version}</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
 		<dependency>
 		  <groupId>org.apache.flink</groupId>
-		  <artifactId>flink-table_${scala.binary.version}</artifactId>
-		  <version>${flink.version}</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.apache.flink</groupId>
-		  <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+		  <artifactId>flink-table_${binary.version}</artifactId>
 		  <version>${flink.version}</version>
 		</dependency>
 		<dependency>
@@ -91,7 +86,17 @@ under the License.
 		</dependency>
 		<dependency>
 		  <groupId>org.apache.flink</groupId>
-		  <artifactId>flink-connector-kafka-0.10_${scala.binary.version}</artifactId>
+		  <artifactId>flink-connector-kafka-0.10_${binary.version}</artifactId>
+		  <version>${flink.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.apache.flink</groupId>
+		  <artifactId>flink-scala_${binary.version}</artifactId>
+		  <version>${flink.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.apache.flink</groupId>
+		  <artifactId>flink-streaming-scala_${binary.version}</artifactId>
 		  <version>${flink.version}</version>
 		</dependency>
 		<!-- Add connector dependencies here. They must be in the default scope (compile). -->
@@ -100,7 +105,7 @@ under the License.
 
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-connector-kafka-0.10_${scala.binary.version}</artifactId>
+			<artifactId>flink-connector-kafka-0.10_${binary.version}</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
 		-->
@@ -108,9 +113,9 @@ under the License.
 		<!-- Add logging framework, to produce console output when running in the IDE. -->
 		<!-- These dependencies are excluded from the application JAR by default. -->
 		<dependency>
-		    <groupId>org.dom4j</groupId>
-		    <artifactId>dom4j</artifactId>
-		    <version>2.1.1</version>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -125,10 +130,15 @@ under the License.
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-        <groupId>com.alibaba</groupId>
-        <artifactId>fastjson</artifactId>
-        <version>1.2.15</version>
-    </dependency>
+	        <groupId>com.alibaba</groupId>
+	        <artifactId>fastjson</artifactId>
+	        <version>1.2.15</version>
+        </dependency>
+		<dependency>
+			<groupId>com.esotericsoftware.yamlbeans</groupId>
+			<artifactId>yamlbeans</artifactId>
+			<version>1.09</version>
+		</dependency>
 	</dependencies>
 
 	<build>

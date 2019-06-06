@@ -1,95 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin name="executor.ExecutorPlugin" hosts="at171,at172,la02,la03,np26">
-    <meta>impala</meta>
-    <execute name="refresh_atonce" uniq="false">
-        <timer>0 */1 * * * ?</timer>
-        <class name="com.cnc.oce.util.ImpalaUtil" method="refreshTable">
-            <params name="tableNames">
-            wslog_50,wslog_51,wslog_52
-            </params>
-        </class>
-    </execute>
-
-    <execute name="refresh_rapid" uniq="false">
-        <timer>0 */3 * * * ?</timer>
-        <class name="com.cnc.oce.util.ImpalaUtil" method="refreshTable">
-            <params name="tableNames">
-            wslog_30,wslog_31,wslog_70,wsstat_stathdtaccessiii
-            </params>
-        </class>
-    </execute>
-
-    <execute name="refresh" uniq="false">
-        <timer>0 */10 * * * ?</timer>
-        <class name="com.cnc.oce.util.ImpalaUtil" method="refreshTable">
-            <params name="tableExclude">wslog_50,wslog_51,wslog_52,wslog_30,wslog_31,wslog_70,wsstat_stathdtaccessiii</params>
-            <params name="tableNames">ALLORI</params>
-        </class>
-    </execute>
-
-    <execute name="update_view_daily">
-        <timer>0 0,10 0 * * ?</timer>
-        <class name="com.cnc.oce.util.ImpalaUtil" method="updateView">
-            <params name="tableNames">ALLORI</params>
-            <params name="tableExclude">wslog_7,wslog_30,wslog_31,wsstat_statchanhostuniqhll_0,wslog_41,wslog_6</params>
-            <params name="hourAgo">168</params>
-        </class>
-    </execute>
-
-    <execute name="diy_view_daily">
-        <timer>0 0,10 0 * * ?</timer>
-        <sql><![CDATA[ alter view v_statchanhostuniqhll_0 as select * from wsstat_statchanhostuniqhll_0 where timestr >= '$(date -d '-3 days' "+%Y%m%d")' union select * from qtlstat_statchanhostuniqhll_0 where timestr < '$(date -d '-3 days' "+%Y%m%d")' ]]></sql>
-        <sql><![CDATA[ alter view v_wsflow as select a.*, from_unixtime(a.ts, 'yyyy-MM-dd HH:mm:ss') as utctime from wslog_41 a where timestr >= '$(date -d '-3 days' "+%Y%m%d")' union all select b.*, from_unixtime(b.ts, 'yyyy-MM-dd HH:mm:ss') as utctime from wslog_41 b where timestr < '$(date -d '-3 days' "+%Y%m%d")' ]]></sql>
-        <sql><![CDATA[ alter view v_log_6 as select a.*, from_unixtime(a.ts, 'yyyy-MM-dd HH:mm:ss') as utctime from wslog_6 a where timestr >= '$(date -d '-3 days' "+%Y%m%d")' union all select b.*, from_unixtime(b.ts, 'yyyy-MM-dd HH:mm:ss') as utctime from qtllog_6 b where timestr < '$(date -d '-3 days' "+%Y%m%d")' ]]></sql>
-        <sql><![CDATA[ ALTER VIEW v_transport_statistics AS SELECT chan, hdt_fcip_hn host, bgnts time, CAST(hdt_tp_id AS BIGINT) transport_id, hdt_tp_code transport_code, CAST(hdt_cus_id AS BIGINT) customer_id, hdt_tp_type transport_type, hdt_tp_type_n transport_type_nam, hdt_access_domain access_domain, CAST(hdt_is_end_user AS INT) endpoint_type, fccoun host_country, fcprov host_province, fccity host_city, hit req_num1, hdt_req_num_finish req_num_finish, hdt_fail_num fail_num, hdt_in_flow_bytes in_flow_bytes, hdt_out_flow_bytes out_flow_bytes, hdt_msec wait_time, hdt_in_flow_bytes client_in_flow_bytes, hdt_out_flow_bytes client_out_flow_bytes, hdt_msec client_wait_time, hdt_recv in_flow_bytes_origin, hdt_send out_flow_bytes_origin, timestr FROM v_stathdtaccessiii ]]></sql>
-    </execute>
-
-    <execute name="clear_impala_daily">
-        <timer>0 10 0 * * ?</timer>
-        <class name="com.cnc.oce.util.ImpalaUtil" method="delData">
-            <params name="tableExclude">qtllog_30,qtllog_31</params>
-            <params name="tableNames">ALL</params>
-        </class>
-    </execute>
-
-    <execute name="prepare_partition_daily">
-        <timer>0 10 0 * * ?</timer>
-        <class name="com.cnc.oce.util.ImpalaUtil" method="addPartitions">
-            <params name="tableExclude">qtllog_30,qtllog_31</params>
-            <params name="tableNames">ALL</params>
-        </class>
-    </execute>
-
-    <execute name="self_audit_daily">
-        <timer>0 20 4 * * ?</timer>
-        <class name="com.cnc.oce.util.ImpalaUtil" method="auditData">
-            <params name="tableExclude">wslog_30,wslog_31,wslog_8,wslog_9,wslog_11,wslog_12,wslog_13,wslog_14,qtllog_30,qtllog_31,qtllog_8,qtllog_9,qtllog_11,qtllog_12,qtllog_13,qtllog_14</params>
-            <params name="tableNames">ALL</params>
-        </class>
-    </execute>
-
-    <execute name="hdtaccess_download" uniq="true">
-        <timer>0 50 * * * ?</timer>
-        <sql>
-            <![CDATA[
-            insert overwrite hdtaccess_download PARTITION (timestr='$(date -d'-9 hours' "+%Y%m%d-%H")', hdt_tp_id) SELECT concat_ws(' ',getvaluebyid(fvarf,62),getvaluebyid(fvarf,583),getvaluebyid(fvarf,634),getvaluebyid(fvarf,636),getvaluebyid(fvarf,637),host,getvaluebyid(fvarf,635),cast(hdt_recv as string),cast(hdt_send as string),'tunnel',getvaluebyid(fvarf,638),' ',getvaluebyid(fvarf,639)), hdt_tp_id  from v_log_70 where timestr like '$(date -d'-9 hours' "+%Y%m%d-%H")%' and cast(getvaluebyid(fvarf,386) as int) < $(date -d"$(date "+%Y-%m-%d %H:50:00")" +%s) order by ts limit 100000000
-            ]]>
-        </sql>
-        <sql>
-            <![CDATA[
-            insert overwrite hdtaccess_download PARTITION (timestr='$(date -d'-10 hours' "+%Y%m%d-%H")-1', hdt_tp_id) SELECT concat_ws(' ',getvaluebyid(fvarf,62),getvaluebyid(fvarf,583),getvaluebyid(fvarf,634),getvaluebyid(fvarf,636),getvaluebyid(fvarf,637),host,getvaluebyid(fvarf,635),cast(hdt_recv as string),cast(hdt_send as string),'tunnel',getvaluebyid(fvarf,638),' ',getvaluebyid(fvarf,639)), hdt_tp_id  from v_log_70 where timestr like '$(date -d'-10 hours' "+%Y%m%d-%H")%' and cast(getvaluebyid(fvarf,386) as int) >= $(date -d"$(date -d'-1 hour' "+%Y-%m-%d %H:50:00")" +%s) order by ts limit 100000000
-            ]]>
-        </sql>
-        <sql>
-            alter table hdtaccess_download drop partition (timestr like '$(date -d'-10 hours' "+%Y%m%d-%H")%')
-        </sql>
-    </execute>
-
-    <execute name="move_parquet_daily">
-        <timer>0 0 0 * * ?</timer>
-        <class name="com.cnc.oce.util.ImpalaUtil" method="moveParquet">
-            <params name="hourAgo">72</params>
-            <params name="tableNames">wslog_6</params>
-        </class>
-    </execute>
-</plugin>
+<alarms>
+	<alarm name="TestAlarm">
+	    <class name="demo.alarm.handler.TestAlarm"></class>
+	    <table name="test1" topic="hdtaccesskafka">
+	        <column name="customerId" type="String"></column>
+	        <column name="domainName" type="String"></column>
+	        <param name="a" type="Long"></param>
+	        <param name="b" type="Long"></param>
+	        <sql>select time_stamp, transport_code, hdt_access_domain from test1</sql>
+        </table>
+        <table name="test2" topic="hdtaccesskafka">
+	        <column name="customerId" type="String"></column>
+	        <column name="domainName" type="String"></column>
+	        <param name="a" type="Long"></param>
+	        <param name="b" type="Long"></param>
+	        <sql>select time_stamp, recv_bytes_from_client, hdt_access_domain from test2</sql>
+        </table>
+	</alarm>
+		<alarm name="TestAlarm2">
+	    <class name="demo.alarm.handler.TestAlarm"></class>
+	    <table name="test3" topic="hdtaccesskafka">
+	        <column name="customerId" type="String"></column>
+	        <column name="domainName" type="String"></column>
+	        <param name="a" type="Long"></param>
+	        <param name="b" type="Long"></param>
+	        <sql>select time_stamp, host_node_cn, hdt_access_domain from test3</sql>
+        </table>
+        <table name="test4" topic="hdtaccesskafka">
+	        <column name="customerId" type="String"></column>
+	        <column name="domainName" type="String"></column>
+	        <param name="a" type="Long"></param>
+	        <param name="b" type="Long"></param>
+	        <sql>select time_stamp, fhview, hdt_access_domain from test4</sql>
+        </table>
+	</alarm>
+</alarms>
