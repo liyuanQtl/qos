@@ -29,11 +29,13 @@ import org.apache.flink.table.api.java.StreamTableEnvironment;
 import org.apache.flink.table.api.java.BatchTableEnvironment;
 import org.apache.flink.types.Row;
 
+import demo.exception.CustomException;
+
 public class TableToStreamSet {
 	
 	private static final Logger _log = LoggerFactory.getLogger(TableToStreamSet.class);
 
-//	public DataStream tableToRetractStream(Datastream<Row> dsRow) throws Exception {
+//	public DataStream tableToRetractStream(Datastream<Row> dsRow) throws CustomException {
 //		// convert the Table into a retract DataStream of Row.
 //		//   A retract stream of type X is a DataStream<Tuple2<Boolean, X>>. 
 //		//   The boolean field indicates the type of the change. 
@@ -44,13 +46,13 @@ public class TableToStreamSet {
 //		return retractStream;
 //	}
 	
-	public DataStream tableToStream(StreamTableEnvironment tableEnv, Table table) throws Exception {
+	public DataStream tableToStream(StreamTableEnvironment tableEnv, Table table) throws CustomException {
 		// convert the Table into an append DataStream of Row by specifying the class
 		DataStream<Row> dsRow = tableEnv.toAppendStream(table, Row.class);
 		return dsRow;
 	}
 	
-//	public DataStream tableToStream(Datastream<Row> dsRow, TupleTypeInfo<?> ) throws Exception {
+//	public DataStream tableToStream(Datastream<Row> dsRow, TupleTypeInfo<?> ) throws CustomException {
 //
 //		// convert the Table into an append DataStream of Tuple2<String, Integer> 
 //		//   via a TypeInformation
@@ -62,13 +64,13 @@ public class TableToStreamSet {
 //		return dsRow;
 //	}
 	
-	public DataSet tableToSet(BatchTableEnvironment tableEnv, Table table) throws Exception {
+	public DataSet tableToSet(BatchTableEnvironment tableEnv, Table table) throws CustomException {
 		// convert the Table into an append DataSet of Row by specifying the class
 		DataSet<Row> dsRow = tableEnv.toDataSet(table, Row.class);
 		return dsRow;
 	}
 	
-	public DataSet tableToSet(BatchTableEnvironment tableEnv, Table table, TypeInformation<Row> tpe) throws Exception {
+	public DataSet tableToSet(BatchTableEnvironment tableEnv, Table table, TypeInformation<Row> tpe) throws CustomException {
 		// convert the Table into an append DataSet of Row by specifying the class
 		DataSet<Row> dsRow = tableEnv.toDataSet(table, tpe);
 		return dsRow;

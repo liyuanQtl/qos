@@ -17,9 +17,11 @@ import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.node.Obje
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import demo.util.ParserSql;
+import demo.util.ParserAlarm;
 import demo.alarm.basic.BasicAlarm;
 import demo.object.AlarmBean;
+import demo.common.Constants;
+import demo.exception.CustomException;
 
 /**
  * Skeleton for a Flink Streaming Job.
@@ -37,9 +39,9 @@ public class AlarmExecutor {
 	
 	private static final Logger _log = LoggerFactory.getLogger(AlarmExecutor.class);
 	
-	private Map<String, AlarmBean> alarms = ParserSql.getSqlMap();
+	private Map<String, AlarmBean> alarms = ParserAlarm.getAlarmMap();
 
-	public void run() throws Exception {
+	public void run() throws CustomException {
 		
 //		List<Class<?>> claList = new ArrayList<>();
 		Iterator<Entry<String, AlarmBean>> iterator = alarms.entrySet().iterator();
@@ -60,6 +62,11 @@ public class AlarmExecutor {
 			}
 		} catch (ClassNotFoundException e) {
 			_log.error(null, e);
+			throw new CustomException("class not found");
+		} catch (Exception e) {
+			_log.error(null, e);
+			e.printStackTrace();
+			throw new CustomException(e.toString());
 		}
 	}
 }

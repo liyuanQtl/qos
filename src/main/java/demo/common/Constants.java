@@ -22,7 +22,8 @@ public class Constants {
         public String getOffset() {
             return this.offset;
         }
-        public static KAFKA_CONSUMER_START fromOffset(String offset) {
+        public static KAFKA_CONSUMER_START fromOffset(String os) {
+        	String offset = os.toLowerCase();
         	if (offset.equals(""))
         		return GROUPOFFSETS;
         	for (KAFKA_CONSUMER_START type : KAFKA_CONSUMER_START.values()) { 
@@ -36,4 +37,7 @@ public class Constants {
     
     public static final String FILE_PROP_NAME   = "file.yaml";
     public static final String KAFKA_PROP_NAME = "kafka.yaml";
+    public static final String GROUP_WINDOW = "groupwindow";
+    public static final String OVER_WINDOW = "overwindow";
+    public static final String TIMESTAMP_NAME = "time_stamp";
 }

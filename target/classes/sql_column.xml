@@ -3,6 +3,8 @@
 	<alarm name="TestAlarm">
 	    <class name="demo.alarm.handler.TestAlarm"></class>
 	    <table name="test1" topic="hdtaccesskafka">
+	        <timeAttr>eventTime</timeAttr>
+	        <window name="groupWindow">tumblling, 1m</window>
 	        <column name="customerId" type="String"></column>
 	        <column name="domainName" type="String"></column>
 	        <param name="a" type="Long"></param>
@@ -10,6 +12,8 @@
 	        <sql>select time_stamp, transport_code, hdt_access_domain from test1</sql>
         </table>
         <table name="test2" topic="hdtaccesskafka">
+        	<timeAttr>processTime</timeAttr>
+	        <window name="groupWindow">sliding, 1m, 1m</window>
 	        <column name="customerId" type="String"></column>
 	        <column name="domainName" type="String"></column>
 	        <param name="a" type="Long"></param>
@@ -20,6 +24,8 @@
 		<alarm name="TestAlarm2">
 	    <class name="demo.alarm.handler.TestAlarm"></class>
 	    <table name="test3" topic="hdtaccesskafka">
+	        <timeAttr>eventTime</timeAttr>
+	        <window name="overWindow">host_node_cn, 2</window>
 	        <column name="customerId" type="String"></column>
 	        <column name="domainName" type="String"></column>
 	        <param name="a" type="Long"></param>

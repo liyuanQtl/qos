@@ -20,9 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import demo.source.KafkaSource;
 import demo.table.StreamSetToTable;
-import demo.util.ParserSql;
-import demo.object.AlarmBean;
 import demo.alarm.AlarmExecutor;
+import demo.exception.CustomException;
 
 /**
  * Skeleton for a Flink Streaming Job.
@@ -40,7 +39,7 @@ public class StreamingJob {
 	
 	private static final Logger _log = LoggerFactory.getLogger(StreamingJob.class);
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws CustomException {
 		AlarmExecutor exe = new AlarmExecutor();
 		exe.run();
 //		// set up the streaming execution environment

@@ -36,11 +36,13 @@ import org.apache.flink.table.api.java.StreamTableEnvironment;
 import org.apache.flink.table.api.java.BatchTableEnvironment;
 import org.apache.flink.types.Row;
 
+import demo.exception.CustomException;
+
 public class StreamSetToTable {
 	
 	private static final Logger _log = LoggerFactory.getLogger(StreamSetToTable.class);
 	
-	public Table streamToTable(StreamTableEnvironment tableEnv, DataStream stream) throws Exception {
+	public Table streamToTable(StreamTableEnvironment tableEnv, DataStream stream) throws CustomException {
 		// Convert the DataStream into a Table with default fields "f0", "f1"
 		Table table1 = tableEnv.fromDataStream(stream);
 
@@ -49,7 +51,7 @@ public class StreamSetToTable {
 		return table1;
 	}
 	
-	public Table setToTable(BatchTableEnvironment tableEnv, DataSet set) throws Exception {
+	public Table setToTable(BatchTableEnvironment tableEnv, DataSet set) throws CustomException {
 		// Convert the DataSet into a Table with default fields "f0", "f1"
 		Table table1 = tableEnv.fromDataSet(set);
 
@@ -58,7 +60,7 @@ public class StreamSetToTable {
 		return table1;
 	}
 	
-	public void registerStream(StreamTableEnvironment tableEnv, String tableName, DataStream<Row> stream) {
+	public void registerStream(StreamTableEnvironment tableEnv, String tableName, DataStream<Row> stream) throws CustomException {
 		tableEnv.registerDataStream(tableName, stream);
 	}
 }

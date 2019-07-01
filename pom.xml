@@ -139,6 +139,16 @@ under the License.
 			<artifactId>yamlbeans</artifactId>
 			<version>1.09</version>
 		</dependency>
+		<dependency>
+		  <groupId>org.apache.commons</groupId>
+		  <artifactId>commons-lang3</artifactId>
+		  <version>3.9</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.mail</groupId>
+		    <artifactId>javax.mail-api</artifactId>
+		    <version>1.6.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -40,26 +40,46 @@ import demo.object.Column;
 import demo.object.Topic;
 import demo.user.CustomSchema;
 import demo.common.Constants.KAFKA_CONSUMER_START;
+import demo.exception.CustomException;
 
 public class KafkaSource {
 	
 	private static final Logger _log = LoggerFactory.getLogger(KafkaSource.class);
 	
-	private static final Properties properties = getKafkaConf();
-	private static final Map<String, Topic> topicsInfo = getTopicInfo();
+	private static Properties properties = null;
+	private static Map<String, Topic> topicsInfo = null;
 	
-	private final static Properties getKafkaConf() {
-		Properties properties = PropertyReader.getProp("/kafkaConf.properties");
-		System.out.println("topic:"+properties.getProperty("topic"));
-		_log.info("topic:"+properties.getProperty("topic"));
-		return properties;
+	static {
+		initConf();
 	}
 	
-	private final static Map<String, Topic> getTopicInfo() {
-		return ParserTopic.getTopics("/kafkaTopicsInfo.yaml");
+	private static void initConf(){
+		properties = getKafkaConf();
+		topicsInfo = getTopicInfo();
 	}
 	
-	public void setStartFrom(FlinkKafkaConsumer010<Row> consumer) throws Exception {
+	private static Properties getKafkaConf() {
+		try {
+			Properties properties = PropertyReader.getProp("/kafkaConf.properties");
+			System.out.println("topic:"+properties.getProperty("topic"));
+			_log.info("topic:"+properties.getProperty("topic"));
+			return properties;
+		} catch (CustomException e) {
+			_log.error("get kafka conf error", e);
+			return null;
+		}
+	}
+	
+	private static Map<String, Topic> getTopicInfo() {
+		try {
+			return ParserTopic.getTopics("/kafkaTopicsInfo.yaml");
+		} catch (CustomException e) {
+			_log.error("read topic info error", e);
+			return null;
+		}
+	}
+	
+	public FlinkKafkaConsumer010<Row> setStartFrom(FlinkKafkaConsumer010<Row> consumer) throws CustomException {
 		String start = properties.getProperty("start.position");
 		if (null == start)
 			start = "";
@@ -78,7 +98,7 @@ public class KafkaSource {
 			    	String[] topicPositions = properties.getProperty("topicPosition").split(";");
 			    	String[] topicOffsets = properties.getProperty("topicOffset").split(";");
 			    	if (topics.length != topicPositions.length || topics.length != topicOffsets.length)
-			    		throw new Exception("topics do not equal positon or offset");
+			    		throw new CustomException("topics do not equal positon or offset");
 			    	Map<KafkaTopicPartition, Long> specificStartOffsets = new LinkedHashMap<>();
 			    	for (int i = 0; i < topics.length; i++) 
 			    	    specificStartOffsets.put(new KafkaTopicPartition(topics[i], Integer.valueOf(topicPositions[i])), Long.valueOf(topicOffsets[i]));
@@ -91,14 +111,16 @@ public class KafkaSource {
 			    	break;
 			    case GROUPOFFSETS :
 			    	consumer.setStartFromGroupOffsets();
+			    	break;
 			}
-		} catch (Exception e) {
+		} catch (CustomException e) {
 			_log.error(null, e);
+			throw e;
 		}
-
+        return consumer;
 	}
 	
-	public FlinkKafkaConsumer010<Row> getKafkaConsumer() throws Exception {
+	public FlinkKafkaConsumer010<Row> getKafkaConsumer() throws CustomException {
 		System.out.println("kafka source get consumer");
 //		String[] topicsInfo = properties.getProperty("topic").split(";");
 //		for (String topic : topics) {
@@ -109,32 +131,30 @@ public class KafkaSource {
 		try {
 			FlinkKafkaConsumer010<Row> myConsumer =
 				    new FlinkKafkaConsumer010<>(topic, new CustomSchema(topicsInfo.get(topic)), properties);
-//			FlinkKafkaConsumer010<String> myConsumer =
-//		            new FlinkKafkaConsumer010<>(properties.getProperty("topic"), new SimpleStringSchema(), properties);
 			setStartFrom(myConsumer);
 			return myConsumer;
 		} catch (Exception e) {
-			System.out.println("error" + e);
-			return null;
+			System.out.println("error:" + e);
+			throw new CustomException(e.toString());
 		}
 	}
 
-//	public FlinkKafkaConsumer010<Row> multiTopicConsumer() throws Exception {}
+//	public FlinkKafkaConsumer010<Row> multiTopicConsumer() throws CustomException {}
 	
-	public FlinkKafkaConsumer010<Row> getKafkaConsumer(String topic) throws Exception {
+	public FlinkKafkaConsumer010<Row> getKafkaConsumer(String topic) throws CustomException {
 		System.out.println("kafka source get consumer");
 		try {
 			FlinkKafkaConsumer010<Row> myConsumer =
 				    new FlinkKafkaConsumer010<>(topic, new CustomSchema(topicsInfo.get(topic)), properties);
 			setStartFrom(myConsumer);
 			return myConsumer;
-		} catch (Exception e) {
+		} catch (CustomException e) {
 			System.out.println("error" + e);
-			return null;
+			throw e;
 		}
 	}
 	
-//	public final static <T> KafkaAvroTableSource<T> getKafkaAvroTableSource(DeserializationSchema<T> schema, AssignerWithPunctuatedWatermarks<T> wm) throws Exception {
+//	public final static <T> KafkaAvroTableSource<T> getKafkaAvroTableSource(DeserializationSchema<T> schema, AssignerWithPunctuatedWatermarks<T> wm) throws CustomException {
 //		Class<? extends SpecificRecord> clazz = MyAvroType.class; 
 //		KafkaAvroTableSource kafkaTableSource = new Kafka010AvroTableSource(
 //		    kafkaTopic,
@@ -143,7 +163,7 @@ public class KafkaSource {
 //		return kafkaTableSource;
 //	}
 //	
-//	public final static <T> KafkaJsonTableSource<T> getKafkaJsonTableSource(DeserializationSchema<T> schema, AssignerWithPunctuatedWatermarks<T> wm) throws Exception {
+//	public final static <T> KafkaJsonTableSource<T> getKafkaJsonTableSource(DeserializationSchema<T> schema, AssignerWithPunctuatedWatermarks<T> wm) throws CustomException {
 //		Properties properties = getKafkaProp();
 //		String[] fields = getFields();
 //		// specify JSON field names and types

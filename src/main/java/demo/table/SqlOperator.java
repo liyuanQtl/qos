@@ -25,15 +25,22 @@ import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.java.BatchTableEnvironment;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
+import demo.exception.CustomException;
 
-public class QueryTable {
+public class SqlOperator {
 	
-	private static final Logger _log = LoggerFactory.getLogger(QueryTable.class);
+	private static final Logger _log = LoggerFactory.getLogger(SqlOperator.class);
 	
-	public Table queryTable(StreamTableEnvironment tableEnv, String sql) throws Exception {
+	public Table queryTable(StreamTableEnvironment tableEnv, String sql) throws CustomException {
 		// compute revenue for all customers from France
-		Table revenue = tableEnv.sqlQuery(sql);
-		return revenue;
+		try {
+			Table revenue = tableEnv.sqlQuery(sql);
+			return revenue;
+		} catch (Exception e) {
+			_log.error(null, e);
+			e.printStackTrace();
+			throw new CustomException(e.toString());
+		}
 	}
 
 	public Table queryTable(BatchTableEnvironment tableEnv, String sql) throws Exception {

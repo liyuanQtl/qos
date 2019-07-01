@@ -26,19 +26,18 @@ import java.util.Map.Entry;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import com.esotericsoftware.yamlbeans.YamlReader;
-//import org.yaml.snakeyaml.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import demo.util.YamlParser;
 import demo.object.Column;
 import demo.object.Topic;
+import demo.exception.CustomException;
 
 public class ParserTopic {
 	
 	private static final Logger _log = LoggerFactory.getLogger(ParserTopic.class);
 	
-	public static Map<String, Topic> getTopics(String yamlFilePath) {
+	public static Map<String, Topic> getTopics(String yamlFilePath) throws CustomException {
 		YamlReader reader = null;
 		try {
 			reader = new YamlReader(new InputStreamReader(ParserTopic.class.getResourceAsStream(yamlFilePath)));
@@ -73,7 +72,8 @@ public class ParserTopic {
 			return topics;
 		} catch (Exception e) {
 			_log.error(null, e);
-			return null;
+			e.printStackTrace();
+			throw new CustomException(e.toString());
 		}
 	}
 	

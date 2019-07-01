@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables>
+    <table name="test1" topic="hdtaccesskafka">
+        <timeAttr>eventTime</timeAttr>
+        <window name="groupWindow">tumbling, 1m</window>
+        <column>customerId, domainName</column>
+        <param name="a" type="Long"></param>
+        <param name="b" type="Long"></param>
+        <sql>select time_stamp, transport_code, hdt_access_domain from test1</sql>
+       </table>
+       <table name="test2" topic="hdtaccesskafka">
+       	<timeAttr>processingTime</timeAttr>
+        <window name="groupWindow">sliding, 1m, 1m</window>
+        <column>customerId, domainName</column>
+        <param name="a" type="Long"></param>
+        <param name="b" type="Long"></param>
+        <sql>select time_stamp, recv_bytes_from_client, hdt_access_domain from test2</sql>
+       </table>
+    <table name="test3" topic="hdtaccesskafka">
+        <timeAttr>eventTime</timeAttr>
+        <window name="overWindow">host_node_cn, 2</window>
+        <column>customerId, domainName</column>
+        <param name="a" type="Long"></param>
+        <param name="b" type="Long"></param>
+        <sql>select time_stamp, host_node_cn, hdt_access_domain from test3</sql>
+       </table>
+       <table name="test4" topic="hdtaccesskafka">
+        <column>customerId, domainName</column>
+        <param name="a" type="Long"></param>
+        <param name="b" type="Long"></param>
+        <sql>select time_stamp, fhview, hdt_access_domain from test4</sql>
+       </table>
+</tables>

@@ -5,20 +5,25 @@ import java.util.List;
 import java.io.Serializable;
 
 import demo.object.Column;
+import demo.object.TimeWindow;
 
 public class TableBean implements Serializable {
-    private String name;
-    private String topic;
-    private String sql;
-    private List<Column> columns;
-    private List<Column> params;
+    private String sql = "";
+    private String name = "";
+    private String topic = "";
+    private String timeAttr = "";
+    private TimeWindow window = null;
+    private List<Column> params = null;
+    private String[] columns = null;
     
-    public TableBean(String name, String topic, String sql, List<Column> columns, List<Column> params) {
+    public TableBean(String name, String topic, String sql, String[] columns, List<Column> params, String timeAttr, TimeWindow window) {
     	this.name = name;
     	this.topic = topic;
     	this.sql = sql;
     	this.columns = columns;
     	this.params = params;
+    	this.timeAttr = timeAttr;
+    	this.window = window;
     }
     public String getName() {
     	return name;
@@ -29,10 +34,16 @@ public class TableBean implements Serializable {
     public String getSql() {
     	return sql;
     }
-    public List<Column> getColumns() {
+    public String[] getColumns() {
     	return columns;
     }
     public List<Column> getParams() {
     	return params;
+    }
+    public String getTimeAttr() {
+    	return timeAttr;
+    }
+    public TimeWindow getWindow() {
+    	return window;
     }
 }

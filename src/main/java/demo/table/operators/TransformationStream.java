@@ -1,4 +1,4 @@
-//package demo;
+//package demo.table.operators;
 //
 //import org.apache.flink.api.common.functions.MapFunction;
 //import org.apache.flink.api.common.functions.ReduceFunction;
@@ -9,19 +9,10 @@
 //import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 //import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
 //import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-//import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
-//import org.apache.flink.api.common.serialization.DeserializationSchema;
 //
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //import java.util.Properties;
-//
-//import demo.KafkaConnect;
-//import demo.WriteTextSink;
-//import demo.FlowSchema;
-////import demo.AggreFun;
-//import demo.CustomPunctuatedWatermark;
-//import object.Flow;
 //
 //public class TransformationStream {
 //	

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alarms>
+	<alarm name="TestAlarm">
+	    <class name="demo.alarm.handler.TestAlarmHandler"></class>
+	    <table>test1, test2</table>
+	</alarm>
+</alarms>

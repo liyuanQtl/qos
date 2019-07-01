@@ -3,9 +3,9 @@ package demo.object;
 import java.io.Serializable;
 
 public class Column implements Serializable {
-    private String name;
-    private String type;
-    private String discription;
+    private String name = "";
+    private String type = "";
+    private String discription = "";
     
     public Column(String name, String type, String discription) {
     	this.name = name;

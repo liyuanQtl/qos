@@ -26,14 +26,16 @@ import java.io.FileNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import demo.exception.CustomException;
+
 public class PropertyReader {
 	
 	private static final Logger _log = LoggerFactory.getLogger(PropertyReader.class);
 	
-	public final static Properties getProp(String propertyFilePath) {
+	public final static Properties getProp(String propertyFilePath) throws CustomException {
 	    if (propertyFilePath == null) {  
 		    _log.error("propertyFilePath is null!");  
-		    return null;  
+		    throw new CustomException("propertyFilePath is null"); 
 		}  
 		Properties prop = loadPropertyFile(propertyFilePath);
 		return prop;
@@ -47,7 +49,7 @@ public class PropertyReader {
 	 * @author lillian create：2019-04-10 
 	 * @author lillian update：2019-04-10 
 	 */  
-	private static Properties loadPropertyFile(String propertyFilePath) {  
+	private static Properties loadPropertyFile(String propertyFilePath) throws CustomException {  
 		InputStream is = PropertyReader.class.getResourceAsStream(propertyFilePath);
 		System.out.println("is:"+is);
 	    if (is == null) {
@@ -58,8 +60,9 @@ public class PropertyReader {
 	        ppts.load(is);
 	        return ppts;  
 	    } catch (Exception e) { 
-	        _log.debug("load prop file error:" + propertyFilePath, e);  
-	        return null;  
+	        _log.debug("load prop file error:" + propertyFilePath, e);
+	        e.printStackTrace();
+	        throw new CustomException(e.toString()); 
 	    }  
 	}
   
@@ -72,7 +75,7 @@ public class PropertyReader {
 	 * @author lillian create：2019-04-10 
 	 * @author lillian update：2019-04-10 
 	 */  
-    private static Properties loadPropertyFileByFileSystem(final String propertyFilePath) {  
+    private static Properties loadPropertyFileByFileSystem(final String propertyFilePath) throws CustomException {  
 	    try {  
 	        Properties ppts = new Properties();  
 	        ppts.load(new FileInputStream(propertyFilePath));  
@@ -80,14 +83,15 @@ public class PropertyReader {
 	    } catch (FileNotFoundException e) {  
 	        _log.error("FileInputStream(\"" + propertyFilePath  
 	                 + "\")! FileNotFoundException: " + e);  
-	        return null;  
+	        e.printStackTrace();
+	        throw new CustomException(e.toString());
 	    } catch (IOException e) {  
 	        _log.error("Properties.load(InputStream)! IOException: " + e);  
-	        return null;  
+	        throw new CustomException(e.toString());
 	    }
     }
     
-//    public static void main(String[] args) throws Exception {
+//    public static void main(String[] args) throws CustomException {
 //    	Properties prop = getProp("/kafka.properties");
 //    	System.out.println(prop.getProperty("topic"));
 //    }
