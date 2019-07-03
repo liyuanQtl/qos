@@ -4,15 +4,15 @@ import java.util.Properties;
 
 public class EmailSendInfo {
 	// 登陆邮件发送服务器的用户名和密码
-    private static String userName       = "linliyuan870507";
-    private static String password       = "!@#$%^&*()lly";
+    private static String userName       = "";
+    private static String password       = "";
     // 发送邮件的服务器的IP和端口
-    private static String mailServerPort = "25";
-    private static String mailServerHost = "smtp.163.com";
+    private static String mailServerPort = "";
+    private static String mailServerHost = "";
     // 邮件发送者的地址
-    private String fromAddress = "linliyuan870507@163.com";
+    private String fromAddress = "";
     // 邮件接收者的地址
-    private String toAddress = "linliyuan@wangsu.com";
+    private String toAddress = "";
     // 是否需要身份验证
     private boolean validate = true;
     // 邮件主题
