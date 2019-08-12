@@ -1,53 +1,44 @@
 package demo.sink;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.PrintStream;
 
-public class CustomFileSink implements SinkFunction<Row> {
-	
-	private static final Logger _log = LoggerFactory.getLogger(CustomFileSink.class);
-    
-	@Override 
-    public void invoke(Row row) {
-        try{
-        	File dir = new File("E:\\myworkplace\\eclipse\\qos-demo\\results");
-        	if (!dir.exists()) {
-        		dir.mkdir();
-        	}
-        	
-        	Long ts = flow.getDate().getTime();
-        	String filename = "E:\\myworkplace\\eclipse\\qos-demo\\results\\" + ts + ".txt";
-            File file =new File(filename);
-            //if file doesnt exists, then create it
-            if(!file.exists()){
-                file.createNewFile();
-            }
-
-            System.out.println("filename:" + file.getName());
-            //true = append file
-            FileWriter fileWritter = new FileWriter(file, true);
-            System.out.println("flow.toString():" + flow.toString());
-            fileWritter.write(flow.toString()+"\n");
-            fileWritter.close();
-
-       } catch(IOException e){
-           e.printStackTrace();
-       }
-    }
-}
-
-import org.apache.flink.api.common.serialization.SimpleStringEncoder;
+import org.apache.flink.api.common.serialization.Encoder;
 import org.apache.flink.core.fs.Path;
+import org.apache.flink.core.io.SimpleVersionedSerializer;
+import org.apache.flink.streaming.api.functions.sink.filesystem.BucketAssigner;
 import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink;
+import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.SimpleVersionedStringSerializer;
 
-DataStream<String> input = ...;
+public class FileSink {
+	
+	private static final Logger _log = LoggerFactory.getLogger(FileSink.class);
+    
+	public StreamingFileSink<Row> getFileSink(String outputPath, DataStream<Row> stream) {
+		StreamingFileSink<Row> sink = StreamingFileSink
+			.forRowFormat(new Path(outputPath), (Encoder<Row>) (element, stream) -> {
+				PrintStream out = new PrintStream(stream);
+				out.println(element.f1);
+			})
+			.withBucketAssigner(new KeyBucketAssigner())
+			.build();
+	    return sink;
+	}
+	
+	public class KeyBucketAssigner implements BucketAssigner<Row, String> {
 
-final StreamingFileSink<String> sink = StreamingFileSink
-	.forRowFormat(new Path(outputPath), new SimpleStringEncoder<>("UTF-8"))
-	.build();
+		private static final long serialVersionUID = 987325769970523326L;
 
-input.addSink(sink);
+		@Override
+		public String getBucketId(Row element, Context context) {
+			String f0 = String.valueOf(element.getField(0)); 
+			return f0;
+		}
+
+		@Override
+		public SimpleVersionedSerializer<String> getSerializer() {
+			return SimpleVersionedStringSerializer.INSTANCE;
+		}
+	}
+}

@@ -2,6 +2,8 @@ package demo.object;
 
 import java.util.Properties;
 
+import demo.util.PropertyReader;
+
 public class EmailSendInfo {
 	// 登陆邮件发送服务器的用户名和密码
     private static String userName       = "";
@@ -14,7 +16,7 @@ public class EmailSendInfo {
     // 邮件接收者的地址
     private String toAddress = "";
     // 是否需要身份验证
-    private boolean validate = true;
+    private boolean validate = false;
     // 邮件主题
     private String subject;
     // 邮件的文本内容
@@ -22,6 +24,19 @@ public class EmailSendInfo {
     // 邮件附件的文件名
     private String[] attachFileNames;
 
+    private static Properties getDefault() {
+    	Properties prop = PropertyReader.getProp("/kafka.properties");
+    	this.userName = prop.get("userName");
+    	this.password = prop.get("password");
+    	this.mailServerPort = prop.get("mailServerPort");
+    	this.mailServerHost = prop.get("mailServerHost");
+    	this.fromAddress = prop.get("fromAddress");
+    	this.toAddress = prop.get("toAddress");
+    	this.subject = prop.get("subject");
+    	this.content = prop.get("content");
+    	this.validate = prop.get("validate").toLowerCase().equals("true")? true:false;
+    }
+    
     /**
      * 获得邮件会话属性
      */
