@@ -41,6 +41,7 @@ import demo.object.GroupWindow;
 import demo.object.OverWindow;
 import demo.object.Topic;
 import demo.common.Constants;
+import demo.common.Constants.GROUP_WINDOW_ASSIGNER;
 import demo.exception.CustomException;
 
 public class ParserTable {
@@ -75,13 +76,18 @@ public class ParserTable {
 				if (null != timeAttr)
 				    timeAttrValue = timeAttr.getText();
 				TimeWindow win = parserWindow(table.element("window"), timeAttrValue);
-				String columnStr = table.element("column").getText();
+				Element columnEle = table.element("column");
+				String columnStr = "";
+				if (null != columnEle)
+				    columnStr = columnEle.getText();
 				String[] columns = columnStr.split(",");
 				String sql = table.element("sql").getText();
 				List<Element> params = table.elements("param");
 				List<Column> paramList = new ArrayList<Column>();
-				for (Element param : params) {
-					paramList.add(new Column(param.attributeValue("name"), param.attributeValue("type"), ""));
+				if (null != params) {
+					for (Element param : params) {
+						paramList.add(new Column(param.attributeValue("name"), param.attributeValue("type"), ""));
+					}
 				}
 				tablesMap.put(tableName, new TableBean(tableName, topicName, sql, columns, paramList, timeAttrValue, win));
 			}
@@ -98,53 +104,104 @@ public class ParserTable {
 	    	if (null == window)
 	    		return null;
 	    	TimeWindow win = new TimeWindow();
-    		String attrLower =  StringUtils.strip(timeAttr.toLowerCase());
-    		if (attrLower.equals("eventtime")) {
-    			win.setTimeAttr("rowtime");
-    		} else if (attrLower.equals("processingtime")) {
-    			win.setTimeAttr("proctime");
-    		} else if (attrLower.equals("ingestiontime")) {
-    			win.setTimeAttr("rowtime");
-    		} else
-    			throw new CustomException("time attr value error");
+	    	win = setTimeAttr(win, timeAttr)
     	    String name = window.attributeValue("name");
-    	    String text = window.getText();
-    	    if (StringUtils.isEmpty(name) || StringUtils.isEmpty(text))
-    	    	throw new CustomException("the time window type error");
-    	    String nameL = StringUtils.strip(name.toLowerCase());
-    	    String[] ts = text.toLowerCase().split(",");
-    	    if (2 > ts.length)
-    	    	throw new CustomException("the time window type error");
-    	    if (nameL.equals(Constants.GROUP_WINDOW)) {
-    	    	win.setType(Constants.GROUP_WINDOW);
-    	    	GroupWindow gw = new GroupWindow();
-    	    	Map interval = parserInterval(StringUtils.strip(ts[1]));
-    	    	gw.setInterval(interval);
-    	    	String funName = StringUtils.strip(ts[0]);
-    	    	if (funName.equals("sliding")) {
-    	    		if (3 > ts.length)
-    	    			throw new CustomException("window value length less than 3");
-    	    		Map hopInterval = parserInterval( StringUtils.strip(ts[2]));
-    	    		gw.setHopInterval(hopInterval);
-    	    	} else if (funName.equals("tumbling") || funName.equals("session")) {
-    	        } else
-    	    		throw new CustomException("window type error");
-    	    	gw.setType(funName);
-    	    	win.setGroupWindow(gw);
-    	    } else if (nameL.equals(Constants.OVER_WINDOW)) {
-    	    	win.setType(Constants.OVER_WINDOW);
-    	    	OverWindow ow = new OverWindow();
-    	    	ow.setPartion( StringUtils.strip(ts[0]));
-    	    	ow.setOrderBy(timeAttr);
-    	    	ow.setPreceding(Integer.valueOf(StringUtils.strip(ts[1])));
-    	    	win.setOverWindow(ow);
-    	    } else {
-    	    	throw new CustomException("the time window type error");
-    	    }
+	    	if (StringUtils.isEmpty()) {
+	    		return null;
+	    	} else if (StringUtils.strip(name.toLowerCase()).equals(Constants.GROUP_WINDOW)) {
+	    		win.setWindowType(Constants.GROUP_WINDOW);
+	    		win.setGroupWindow(parserGroupWindow(window, timeAttr));
+	    	} else if (StringUtils.strip(name.toLowerCase()).equals(Constants.OVER_WINDOW)) {
+	    		win.setWindowType(Constants.OVER_WINDOW);
+	    		win.setOverWindow(parserOverWindow(window, timeAttr));
+	    	} else {
+		    	throw new CustomException("the time window type error");
+		    }
     	    return win;
     	} catch (CustomException e) {
     		throw e;
     	}
+    }
+    
+    public TimeWindow setTimeAttr(TimeWindow window, String timeAttr) throws CustomException {
+		String attrLower = StringUtils.strip(timeAttr.toLowerCase());
+		if (attrLower.equals("eventtime")) {
+			window.setTimeAttr("rowtime");
+		} else if (attrLower.equals("processingtime")) {
+			window.setTimeAttr("proctime");
+		} else if (attrLower.equals("ingestiontime")) {
+			window.setTimeAttr("rowtime");
+		} else
+			throw new CustomException("time attr value error");
+		return window;
+    }
+    
+    public GroupWindow parserGroupWindow(Element window, String timeAttr) throws CustomException {
+        Element type = window.element("type");
+        Element over = window.element("over");
+        Element every = window.element("every");
+        Element on = window.element("on");
+        Element as = window.element("as");
+        Element groupBy = window.element("groupBy");
+        GroupWindow gw = new GroupWindow();
+        if (null == type || StringUtils.isEmpty(type.getText())) {
+        	throw new CustomException("the group window type empty");
+        }
+        String typeName = type.getText();
+        if (null == groupBy || StringUtils.isEmpty(groupBy.getText()))
+        	throw new CustomException("the groupBy empty");
+        String groupBy = groupBy.getText();
+        gw.setGroupby(groupBy);
+        if (StringUtils.strip(typeName.toLowerCase()).equals("global")) {
+        	gw.setType(GROUP_WINDOW_ASSIGNER.GLOBAL);
+        	return gw;
+        }
+        if (null == over || null == on || null == as)
+        	throw new CustomException("the group window fromat error");
+        String overValue = over.getText();
+        String onValue = on.getText();
+        String asValue = on.getText();
+        if (StringUtils.isEmpty(overValue) || StringUtils.isEmpty(onValue) || StringUtils.isEmpty(asValue))
+        	throw new CustomException("the group window fromat error");
+        gw.setOver(overValue);
+        gw.setOn(onValue);
+        gw.setAs(asValue);
+        if (StringUtils.strip(typeName.toLowerCase()).equals("tumbling")) {
+        	gw.setType(GROUP_WINDOW_ASSIGNER.TUMBLING);
+        } else if (StringUtils.strip(typeName.toLowerCase()).equals("slide")) {
+        	if (null == every || StringUtils.isEmpty(every.getText()))
+        		throw new CustomException("the group window fromat error");
+        	gw.setType(GROUP_WINDOW_ASSIGNER.SLIDE);
+        	gw.setEvery(every.getText());
+        } else if (StringUtils.strip(typeName.toLowerCase()).equals("session")) {
+        	gw.setType(GROUP_WINDOW_ASSIGNER.SESSION);
+        } else
+        	throw new CustomException("the group window type error");
+	    return gw;
+    }
+    
+    public OverWindow parserOverWindow(Element window, String timeAttr) throws CustomException {
+	    Element alias = window.element("alias");
+	    Element partitionBy = window.element("partitionBy");
+	    Element orderBy = window.element("orderBy");
+	    Element preceding = window.element("preceding");
+	    Element following = window.element("following");
+	    if (null == alias || null == orderBy || null == preceding)
+        	throw new CustomException("the over window fromat error");
+	    String asValue = alias.getText();
+	    String order = orderBy.getText();
+	    String preValue = preceding.getText();
+	    if (StringUtils.isEmpty(asValue) || StringUtils.isEmpty(order) || StringUtils.isEmpty(preValue))
+        	throw new CustomException("the over window fromat error");
+    	OverWindow ow = new OverWindow();
+    	ow.setOrderBy(order);
+    	ow.setPreceding(preValue);
+    	ow.setAlias(asValue);
+    	if (null != partitionBy)
+    		ow.setPartionBy(partitionBy.getText());
+    	if (null != following)
+    		ow.setFollowing(following.getText());
+    	return ow;
     }
     
     public static Map<String, String> parserInterval(String time) throws CustomException {

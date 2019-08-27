@@ -3,35 +3,61 @@ package demo.object;
 import java.util.Map;
 import java.io.Serializable;
 
-import demo.common.Constants;
+import demo.common.Constants.GROUP_WINDOW_ASSIGNER;
 public class GroupWindow implements Serializable {
 	
-	private String type = "";
-	
-    private Map<String, String> interval = null;
-    private Map<String, String> hopInterval = null;
+	private GROUP_WINDOW_ASSIGNER type;
+    private String over = "";
+    private String every = "";
+    private String on = "";
+    private String as = "w";
+    private String groupBy = "";
     
-    public void setType(String type) {
+    public void setType(GROUP_WINDOW_ASSIGNER type) {
     	this.type = type;
     }
     
-    public void setInterval(Map interval) {
-    	this.interval = interval;
+    publci void setOver(String over) {
+    	this.over = over;
     }
     
-    public void setHopInterval(Map interval) {
-    	this.hopInterval = interval;
+    public void setEvery(String every) {
+    	this.every = every;
     }
-
-    public String getType() {
+    
+    public void setOn(String on) {
+    	this.on = on;
+    }
+    
+    public void setAs(String as) {
+    	this.as = as;
+    }
+    
+    public void setGroupby(String groupBy) {
+    	this.groupBy = groupBy;
+    }
+    
+    public GROUP_WINDOW_ASSIGNER getType() {
     	return type;
     }
     
-    public Map getInterval() {
-    	return interval;
+    public String getOver() {
+    	return over;
     }
     
-    public Map getHopInterval() {
-    	return hopInterval;
+    public String getEvery() {
+    	return every;
+    }
+    
+    public String getOn() {
+    	return on;
+    }
+    
+    public String getGroupby() {
+    	return groupby;
+    }
+    
+    public String getAs() {
+    	return as;
     }
 }

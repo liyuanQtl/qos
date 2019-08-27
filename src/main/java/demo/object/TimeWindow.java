@@ -8,13 +8,13 @@ import demo.object.OverWindow;
 
 public class TimeWindow implements Serializable {
 	
-	private String type = "";
+	private String windowType = "";
     private String timeAttr = "";
     private OverWindow overWindow = null;
     private GroupWindow groupWindow = null;
     
-    public void setType(String type) {
-    	this.type = type;
+    public void setWindowType(String windowType) {
+    	this.windowType = windowType;
     }
     
     public void setTimeAttr(String timeAttr) {
@@ -29,8 +29,8 @@ public class TimeWindow implements Serializable {
     	this.overWindow = ow;
     }
     
-    public String getType() {
-    	return type;
+    public String getWindowType() {
+    	return windowType;
     }
     
     public String getTimeAttr() {

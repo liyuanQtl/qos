@@ -46,4 +46,7 @@ public class TableBean implements Serializable {
     public TimeWindow getWindow() {
     	return window;
     }
+    public void setSql(String sql) {
+    	this.sql = sql;
+    }
 }

@@ -8,8 +8,8 @@ public class Constants {
         OCEAN_API, TXT;
     }
     
-    public enum WINDOW_ASSIGNER {
-        TUMBLING, SLIDING, SESSION, GLOBAL;
+    public enum GROUP_WINDOW_ASSIGNER {
+        TUMBLING, SLIDE, SESSION, GLOBAL;
     }
     
     public enum KAFKA_CONSUMER_START {
@@ -40,4 +40,5 @@ public class Constants {
     public static final String GROUP_WINDOW = "groupwindow";
     public static final String OVER_WINDOW = "overwindow";
     public static final String TIMESTAMP_NAME = "time_stamp";
+    public static final String PYTHON_PROP = "time_stamp";
 }
