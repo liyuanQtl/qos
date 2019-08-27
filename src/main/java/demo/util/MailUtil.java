@@ -48,6 +48,7 @@ public class MailUtil {
             // 根据session创建一个邮件消息    
             MimeMessage  mailMessage = new MimeMessage(sendMailSession);    
             // 创建邮件发送者地址    
+            System.out.println("send mail address:"+mailInfo.getFromAddress());
             Address from = new InternetAddress(mailInfo.getFromAddress());    
             // 设置邮件消息的发送者    
             mailMessage.setFrom(from);    
@@ -64,7 +65,7 @@ public class MailUtil {
 //                mailMessage.saveChanges(); 
             
             //生成邮件文件
-            createEmailFile("/tmp/lillian/EML_myself-TEXT.eml", mailMessage); 
+            createEmailFile(mailInfo.getMailFileName(), mailMessage); 
             
             // 发送邮件    
             Transport.send(mailMessage);   

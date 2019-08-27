@@ -3,14 +3,15 @@ package demo.object;
 import java.util.Properties;
 
 import demo.util.PropertyReader;
+import demo.exception.CustomException;
 
 public class EmailSendInfo {
 	// 登陆邮件发送服务器的用户名和密码
-    private static String userName       = "";
-    private static String password       = "";
+    private String userName       = "";
+    private String password       = "";
     // 发送邮件的服务器的IP和端口
-    private static String mailServerPort = "";
-    private static String mailServerHost = "";
+    private String mailServerPort = "";
+    private String mailServerHost = "";
     // 邮件发送者的地址
     private String fromAddress = "";
     // 邮件接收者的地址
@@ -21,20 +22,32 @@ public class EmailSendInfo {
     private String subject;
     // 邮件的文本内容
     private String content;
+    private String mailFileName = "";
     // 邮件附件的文件名
     private String[] attachFileNames;
 
-    private static Properties getDefault() {
-    	Properties prop = PropertyReader.getProp("/kafka.properties");
-    	this.userName = prop.get("userName");
-    	this.password = prop.get("password");
-    	this.mailServerPort = prop.get("mailServerPort");
-    	this.mailServerHost = prop.get("mailServerHost");
-    	this.fromAddress = prop.get("fromAddress");
-    	this.toAddress = prop.get("toAddress");
-    	this.subject = prop.get("subject");
-    	this.content = prop.get("content");
-    	this.validate = prop.get("validate").toLowerCase().equals("true")? true:false;
+    private void setDefault() {
+    	try {
+	    	Properties prop = PropertyReader.getProp("/mail.properties");
+	    	this.userName = (String) prop.get("userName");
+	    	this.password = (String) prop.get("password");
+	    	this.mailServerPort = (String) prop.get("mailServerPort");
+	    	this.mailServerHost = (String) prop.get("mailServerHost");
+	    	this.fromAddress = (String) prop.get("fromAddress");
+	    	this.toAddress = (String) prop.get("toAddress");
+	    	this.subject = (String) prop.get("subject");
+	    	this.content = (String) prop.get("content");
+	    	this.mailFileName = (String) prop.get("mailFileName");
+	    	String va = (String) prop.get("validate");
+	    	this.validate = va.toLowerCase().equals("true")? true:false;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    public EmailSendInfo() {
+    	super();
+    	setDefault();
     }
     
     /**
@@ -126,5 +139,12 @@ public class EmailSendInfo {
 
     public void setContent(String textContent) {
         this.content = textContent;
+    }
+    public String getMailFileName() {
+        return mailFileName;
+    }
+
+    public void setMailFileName(String mailFileName) {
+        this.mailFileName = mailFileName;
     }
 }
